@@ -312,25 +312,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Services
         const srvContainer = document.getElementById('ui-services');
-        data.services.forEach(s => {
-            srvContainer.innerHTML += `
-                <a href="https://api.whatsapp.com/send?phone=${data.links.whatsappPhone}&text=I'm interested in ${s.name}" class="service-item">
-                    <div class="service-icon" style="background:${s.bg}; color:${s.color};"><i class="fa-solid fa-${s.icon}"></i></div>
-                    <div><div class="service-title">${s.name}</div><div class="service-desc">${s.desc}</div></div>
-                </a>
-            `;
-        });
+        if (data.services) {
+            data.services.forEach(s => {
+                srvContainer.innerHTML += `
+                    <a href="https://api.whatsapp.com/send?phone=${data.links.whatsappPhone}&text=I'm interested in ${s.name}" class="service-item">
+                        <div class="service-icon" style="background:${s.bg}; color:${s.color};"><i class="fa-solid fa-${s.icon}"></i></div>
+                        <div><div class="service-title">${s.name}</div><div class="service-desc">${s.desc}</div></div>
+                    </a>
+                `;
+            });
+        }
 
         // Gallery
         const galContainer = document.getElementById('ui-gallery');
-        data.gallery.forEach(g => {
-            galContainer.innerHTML += `
-                <div class="gallery-item ${g.wide ? 'wide' : ''}">
-                    <img src="${g.url}" alt="${g.title}" loading="lazy">
-                    <div class="overlay"><span>${g.title}</span></div>
-                </div>
-            `;
-        });
+        if (data.gallery) {
+            data.gallery.forEach(g => {
+                galContainer.innerHTML += `
+                    <div class="gallery-item ${g.wide ? 'wide' : ''}">
+                        <img src="${g.url}" alt="${g.title}" loading="lazy">
+                        <div class="overlay"><span>${g.title}</span></div>
+                    </div>
+                `;
+            });
+        }
 
         // Inquiry Form Submission
         const inqForm = document.getElementById('inquiryForm');
