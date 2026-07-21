@@ -104,6 +104,36 @@ app.post('/api/inquiry', (req, res) => {
     }
 });
 
+// 4.6 Get Inquiries (Protected)
+app.get('/api/inquiries', authenticateToken, (req, res) => {
+    try {
+        const inquiryFile = path.join(__dirname, 'inquiries.json');
+        let inquiries = [];
+        if (fs.existsSync(inquiryFile)) {
+            inquiries = JSON.parse(fs.readFileSync(inquiryFile, 'utf8'));
+        }
+        res.json(inquiries.reverse()); // Show newest first
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to read inquiries.' });
+    }
+});
+
+// 4.7 Delete Inquiry (Protected)
+app.delete('/api/inquiries/:id', authenticateToken, (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const inquiryFile = path.join(__dirname, 'inquiries.json');
+        if (fs.existsSync(inquiryFile)) {
+            let inquiries = JSON.parse(fs.readFileSync(inquiryFile, 'utf8'));
+            inquiries = inquiries.filter(inq => inq.id !== id);
+            fs.writeFileSync(inquiryFile, JSON.stringify(inquiries, null, 2));
+        }
+        res.json({ message: 'Inquiry deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete inquiry.' });
+    }
+});
+
 // 5. Admin Panel Route (Serves the admin page)
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
