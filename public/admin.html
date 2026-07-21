@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDL Global - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tab-btn.active { border-bottom: 2px solid #16a34a; color: #16a34a; font-weight: bold; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-95 z-50">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-lock text-4xl text-green-600 mb-3"></i>
+                <h2 class="text-2xl font-bold">Admin Login</h2>
+                <p class="text-sm text-gray-500">Enter credentials to manage Info Card</p>
+            </div>
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-1">Username</label>
+                    <input type="text" id="username" class="w-full border rounded-lg p-2.5 focus:ring focus:ring-green-300 outline-none" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold mb-1">Password</label>
+                    <input type="password" id="password" class="w-full border rounded-lg p-2.5 focus:ring focus:ring-green-300 outline-none" required>
+                </div>
+                <div id="loginError" class="text-red-500 text-sm mb-4 hidden text-center"></div>
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-sm px-6 py-4 flex justify-between items-center sticky top-0 z-40">
+            <div class="flex items-center gap-3">
+                <div class="bg-green-600 text-white p-2 rounded-lg"><i class="fa-solid fa-leaf"></i></div>
+                <h1 class="text-xl font-bold">HDL Global Admin</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="/" target="_blank" class="text-sm font-semibold text-blue-600 hover:underline"><i class="fa-solid fa-external-link-alt mr-1"></i>View Live Card</a>
+                <button onclick="logout()" class="text-sm font-semibold text-red-600 border border-red-600 px-3 py-1.5 rounded hover:bg-red-50 transition">Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow p-6 max-w-5xl mx-auto w-full">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <!-- Tabs -->
+                <div class="flex border-b overflow-x-auto bg-gray-50">
+                    <button class="tab-btn active px-6 py-4 text-sm whitespace-nowrap" onclick="switchTab('tab-basic')"><i class="fa-solid fa-info-circle mr-2"></i>Basic Info</button>
+                    <button class="tab-btn px-6 py-4 text-sm whitespace-nowrap" onclick="switchTab('tab-links')"><i class="fa-solid fa-link mr-2"></i>Links & Maps</button>
+                    <button class="tab-btn px-6 py-4 text-sm whitespace-nowrap" onclick="switchTab('tab-stats')"><i class="fa-solid fa-chart-line mr-2"></i>Stats</button>
+                    <button class="tab-btn px-6 py-4 text-sm whitespace-nowrap" onclick="switchTab('tab-hours')"><i class="fa-solid fa-clock mr-2"></i>Hours</button>
+                </div>
+
+                <!-- Form -->
+                <form id="adminForm" class="p-6">
+                    
+                    <!-- Basic Info Tab -->
+                    <div id="tab-basic" class="tab-content active space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Company Name</label>
+                            <input type="text" id="companyName" class="w-full border rounded-lg p-2" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Tagline</label>
+                            <input type="text" id="companyTagline" class="w-full border rounded-lg p-2" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Description</label>
+                            <textarea id="companyDesc" class="w-full border rounded-lg p-2 h-24" required></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Links Tab -->
+                    <div id="tab-links" class="tab-content space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-semibold mb-1">Phone 1 (Call Now)</label><input type="text" id="phone" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Phone 2 (Alt)</label><input type="text" id="altPhone" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">WhatsApp Phone (No +)</label><input type="text" id="whatsappPhone" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Brochure URL</label><input type="url" id="brochure" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Email (Head Office)</label><input type="email" id="emailHead" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Email (Export)</label><input type="email" id="emailExport" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Website URL</label><input type="url" id="website" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Google Maps Link</label><input type="url" id="mapUrl" class="w-full border rounded-lg p-2"></div>
+                        </div>
+                        <div><label class="block text-sm font-semibold mb-1">Head Office Address</label><textarea id="addressHead" class="w-full border rounded-lg p-2"></textarea></div>
+                        <div><label class="block text-sm font-semibold mb-1">Export Office Address</label><textarea id="addressExport" class="w-full border rounded-lg p-2"></textarea></div>
+                        <div><label class="block text-sm font-semibold mb-1">Google Maps Embed iframe src URL</label><input type="text" id="mapEmbed" class="w-full border rounded-lg p-2 text-sm text-gray-500"></div>
+                    </div>
+
+                    <!-- Stats Tab -->
+                    <div id="tab-stats" class="tab-content space-y-4">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div><label class="block text-sm font-semibold mb-1">Products</label><input type="text" id="statProducts" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Countries</label><input type="text" id="statCountries" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Team</label><input type="text" id="statTeam" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Experience</label><input type="text" id="statExp" class="w-full border rounded-lg p-2"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-info-circle"></i> Stats are displayed on the main card as counters.</p>
+                    </div>
+
+                    <!-- Hours Tab -->
+                    <div id="tab-hours" class="tab-content space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-semibold mb-1">Monday</label><input type="text" id="hoursMon" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Tuesday</label><input type="text" id="hoursTue" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Wednesday</label><input type="text" id="hoursWed" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Thursday</label><input type="text" id="hoursThu" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Friday</label><input type="text" id="hoursFri" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Saturday</label><input type="text" id="hoursSat" class="w-full border rounded-lg p-2"></div>
+                            <div><label class="block text-sm font-semibold mb-1">Sunday</label><input type="text" id="hoursSun" class="w-full border rounded-lg p-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 border-t pt-6 flex justify-between items-center">
+                        <span id="saveStatus" class="text-sm font-bold text-green-600 hidden"><i class="fa-solid fa-check-circle mr-1"></i>Saved Successfully!</span>
+                        <div class="flex-grow"></div>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-8 rounded-lg shadow transition flex items-center">
+                            <i class="fa-solid fa-save mr-2"></i> Save All Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let configData = null;
+
+        // On Load
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('hdl_token');
+            if (token) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                fetchData();
+            }
+        });
+
+        // Login Submit
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const err = document.getElementById('loginError');
+            err.classList.add('hidden');
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username: u, password: p})
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('hdl_token', data.token);
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('dashboard').classList.remove('hidden');
+                    fetchData();
+                } else {
+                    err.textContent = data.error;
+                    err.classList.remove('hidden');
+                }
+            } catch (error) {
+                err.textContent = "Server connection failed.";
+                err.classList.remove('hidden');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('hdl_token');
+            window.location.reload();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        async function fetchData() {
+            try {
+                const res = await fetch('/api/config');
+                configData = await res.json();
+                
+                // Populate Basic Info
+                document.getElementById('companyName').value = configData.basicInfo.companyName;
+                document.getElementById('companyTagline').value = configData.basicInfo.companyTagline;
+                document.getElementById('companyDesc').value = configData.basicInfo.companyDesc;
+                
+                // Populate Links
+                document.getElementById('phone').value = configData.links.phone;
+                document.getElementById('altPhone').value = configData.links.altPhone;
+                document.getElementById('whatsappPhone').value = configData.links.whatsappPhone;
+                document.getElementById('brochure').value = configData.links.brochure;
+                document.getElementById('emailHead').value = configData.links.emailHead;
+                document.getElementById('emailExport').value = configData.links.emailExport;
+                document.getElementById('website').value = configData.links.website;
+                document.getElementById('mapUrl').value = configData.links.mapUrl;
+                document.getElementById('mapEmbed').value = configData.links.mapEmbed;
+                document.getElementById('addressHead').value = configData.links.addressHead;
+                document.getElementById('addressExport').value = configData.links.addressExport;
+
+                // Populate Stats
+                document.getElementById('statProducts').value = configData.stats.products;
+                document.getElementById('statCountries').value = configData.stats.countries;
+                document.getElementById('statTeam').value = configData.stats.team;
+                document.getElementById('statExp').value = configData.stats.experience;
+
+                // Populate Hours
+                document.getElementById('hoursMon').value = configData.businessHours.monday;
+                document.getElementById('hoursTue').value = configData.businessHours.tuesday;
+                document.getElementById('hoursWed').value = configData.businessHours.wednesday;
+                document.getElementById('hoursThu').value = configData.businessHours.thursday;
+                document.getElementById('hoursFri').value = configData.businessHours.friday;
+                document.getElementById('hoursSat').value = configData.businessHours.saturday;
+                document.getElementById('hoursSun').value = configData.businessHours.sunday;
+
+            } catch (error) {
+                console.error("Error fetching config:", error);
+                alert("Failed to load data. Is the server running?");
+            }
+        }
+
+        // Save Form
+        document.getElementById('adminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!configData) return;
+
+            // Collect Data
+            configData.basicInfo.companyName = document.getElementById('companyName').value;
+            configData.basicInfo.companyTagline = document.getElementById('companyTagline').value;
+            configData.basicInfo.companyDesc = document.getElementById('companyDesc').value;
+
+            configData.links.phone = document.getElementById('phone').value;
+            configData.links.altPhone = document.getElementById('altPhone').value;
+            configData.links.whatsappPhone = document.getElementById('whatsappPhone').value;
+            configData.links.brochure = document.getElementById('brochure').value;
+            configData.links.emailHead = document.getElementById('emailHead').value;
+            configData.links.emailExport = document.getElementById('emailExport').value;
+            configData.links.website = document.getElementById('website').value;
+            configData.links.mapUrl = document.getElementById('mapUrl').value;
+            configData.links.mapEmbed = document.getElementById('mapEmbed').value;
+            configData.links.addressHead = document.getElementById('addressHead').value;
+            configData.links.addressExport = document.getElementById('addressExport').value;
+
+            configData.stats.products = document.getElementById('statProducts').value;
+            configData.stats.countries = document.getElementById('statCountries').value;
+            configData.stats.team = document.getElementById('statTeam').value;
+            configData.stats.experience = document.getElementById('statExp').value;
+
+            configData.businessHours.monday = document.getElementById('hoursMon').value;
+            configData.businessHours.tuesday = document.getElementById('hoursTue').value;
+            configData.businessHours.wednesday = document.getElementById('hoursWed').value;
+            configData.businessHours.thursday = document.getElementById('hoursThu').value;
+            configData.businessHours.friday = document.getElementById('hoursFri').value;
+            configData.businessHours.saturday = document.getElementById('hoursSat').value;
+            configData.businessHours.sunday = document.getElementById('hoursSun').value;
+
+            try {
+                const token = localStorage.getItem('hdl_token');
+                const res = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(configData)
+                });
+                
+                if (res.ok) {
+                    const status = document.getElementById('saveStatus');
+                    status.classList.remove('hidden');
+                    setTimeout(() => status.classList.add('hidden'), 3000);
+                } else {
+                    if(res.status === 401 || res.status === 403) {
+                        alert("Session expired. Please log in again.");
+                        logout();
+                    } else {
+                        alert("Failed to save changes.");
+                    }
+                }
+            } catch (error) {
+                alert("Network error while saving.");
+            }
+        });
+    </script>
+</body>
+</html>

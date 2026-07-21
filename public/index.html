@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HDL Global | Indian Groceries Exporter</title>
+    <meta name="description" content="HDL Foods India Pvt Ltd — Premium Pulses, Spices, Dry Fruits & Fertilizer exported worldwide. Contact us for bulk export inquiries.">
+    <link rel="icon" href="https://hdlglobal.co.in/wp-content/uploads/2026/03/cropped-hdl_H-removebg-preview-32x32.png" sizes="32x32">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ---- RESET & BASE ---- */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        :root {
+            --forest: #3f5936; --sage: #728c69; --gold: #cba135; --terra: #cc6633;
+            --light: #fbf9f6; --glass: rgba(251,249,246,0.88); --shadow: 0 20px 60px rgba(0,0,0,0.18);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1a0f url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=2070&auto=format&fit=crop') center/cover fixed;
+            min-height: 100vh;
+            color: #2d2d2d;
+        }
+
+        #loading {
+            position: fixed; inset: 0; background: #fff; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 24px; color: var(--forest);
+        }
+
+        .card {
+            max-width: 480px; margin: 0 auto;
+            background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.55); box-shadow: var(--shadow);
+            overflow: hidden; display: none;
+        }
+
+        .section { padding: 28px 24px; border-bottom: 1px solid rgba(63,89,54,0.1); }
+        .section:last-child { border-bottom: none; }
+        .section-label {
+            font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--sage); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+        }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: rgba(63,89,54,0.15); }
+
+        /* HEADER */
+        .hero-banner {
+            height: 130px; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, #3f5936 0%, #728c69 60%, #cba135 100%);
+        }
+        .logo-wrap { display: flex; justify-content: center; margin-top: -52px; margin-bottom: 16px; }
+        .logo-ring {
+            width: 104px; height: 104px; background: white; border-radius: 50%; padding: 6px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.18); border: 3px solid rgba(255,255,255,0.9);
+        }
+        .logo-ring img { width: 100%; height: 100%; border-radius: 50%; object-fit: contain; }
+        .company-name { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--forest); text-align: center; }
+        .company-tagline { font-size: 11px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase; color: var(--gold); text-align: center; margin: 4px 0 10px; }
+        .company-desc { font-size: 13px; line-height: 1.65; color: #555; text-align: center; padding: 0 8px; }
+
+        /* ICONS */
+        .icon-row { display: flex; justify-content: center; gap: 14px; margin-top: 20px; }
+        .icon-btn {
+            width: 48px; height: 48px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: var(--forest); text-decoration: none; font-size: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+        }
+        .icon-btn:hover { color: var(--gold); }
+
+        /* CTAS */
+        .cta-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+            padding: 15px 20px; border-radius: 14px; font-size: 15px; font-weight: 600; text-decoration: none;
+            margin-bottom: 10px; border: none; cursor: pointer;
+        }
+        .btn-green  { background: #25D366; color: white; }
+        .btn-forest { background: var(--forest); color: white; }
+        .btn-call   { background: var(--gold); color: white; }
+        .btn-outline { background: white; color: var(--forest); border: 1.5px solid rgba(63,89,54,0.25); }
+
+        /* STATS */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stat-card { background: white; border-radius: 14px; padding: 16px; text-align: center; }
+        .stat-number { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--forest); }
+        .stat-label { font-size: 11px; color: #777; margin-top: 4px; font-weight: 500; }
+
+        /* SERVICES */
+        .service-item {
+            display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px;
+            background: white; border-radius: 14px; margin-bottom: 10px; text-decoration: none; color: inherit;
+        }
+        .service-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;}
+        .service-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+        .service-desc  { font-size: 12px; color: #777; line-height: 1.4; }
+
+        /* GALLERY */
+        .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .gallery-item { border-radius: 12px; overflow: hidden; aspect-ratio: 4/3; position: relative; }
+        .gallery-item.wide { grid-column: span 2; aspect-ratio: 16/7; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-item .overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.4), transparent); display: flex; align-items: flex-end; padding: 10px; }
+        .gallery-item .overlay span { color: white; font-size: 11px; font-weight: 600; }
+
+        /* CONTACTS */
+        .contact-card { background: white; border-radius: 14px; padding: 18px; margin-bottom: 12px; }
+        .contact-title { font-size: 13px; font-weight: 700; color: var(--forest); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(63,89,54,0.1); }
+        .contact-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+        .contact-ico { width: 32px; height: 32px; flex-shrink: 0; background: rgba(63,89,54,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--forest); font-size: 13px; }
+        .contact-info { font-size: 13px; color: #444; line-height: 1.5; }
+        .contact-info strong { display: block; font-size: 11px; font-weight: 600; color: var(--sage); margin-bottom: 1px; text-transform: uppercase; }
+
+        /* HOURS */
+        .hours-list { list-style: none; }
+        .hours-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(63,89,54,0.07); font-size: 13px; }
+        .hours-day { font-weight: 500; color: #333; }
+        .hours-time { font-weight: 600; color: var(--forest); }
+        .hours-time.holiday { color: var(--terra); }
+
+        .map-wrap { border-radius: 14px; overflow: hidden; }
+        .footer-section { padding: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div id="loading"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+
+<div class="card" id="mainCard">
+    <div class="hero-banner"></div>
+    <div class="section" style="border-bottom:none; padding-bottom:0;">
+        <div class="logo-wrap">
+            <div class="logo-ring"><img src="https://hdlglobal.co.in/wp-content/uploads/2026/03/cropped-logo.png" alt="Logo"></div>
+        </div>
+        <div class="company-name" id="ui-companyName"></div>
+        <div class="company-tagline" id="ui-companyTagline"></div>
+        <p class="company-desc" id="ui-companyDesc"></p>
+
+        <div class="icon-row">
+            <a id="icon-call" class="icon-btn"><i class="fa-solid fa-phone"></i></a>
+            <a id="icon-mail" class="icon-btn"><i class="fa-solid fa-envelope"></i></a>
+            <a id="icon-web" target="_blank" class="icon-btn"><i class="fa-solid fa-globe"></i></a>
+            <a id="icon-map" target="_blank" class="icon-btn"><i class="fa-solid fa-location-dot"></i></a>
+        </div>
+    </div>
+
+    <div class="section">
+        <a id="btn-whatsapp" class="cta-btn btn-green"><i class="fa-brands fa-whatsapp fa-lg"></i> Chat on WhatsApp</a>
+        <a id="btn-call" class="cta-btn btn-call"><i class="fa-solid fa-phone fa-lg"></i> Call Us Now</a>
+        <a id="btn-brochure" target="_blank" class="cta-btn btn-forest"><i class="fa-solid fa-file-pdf fa-lg"></i> Download Brochure</a>
+        <a id="btn-web" target="_blank" class="cta-btn btn-outline"><i class="fa-solid fa-globe fa-lg"></i> Visit Website</a>
+    </div>
+
+    <div class="section">
+        <div class="section-label">Our Growth</div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number" id="ui-statProd"></div><div class="stat-label">Food Products</div></div>
+            <div class="stat-card"><div class="stat-number" id="ui-statCtry"></div><div class="stat-label">Export Countries</div></div>
+            <div class="stat-card"><div class="stat-number" id="ui-statTeam"></div><div class="stat-label">Team Members</div></div>
+            <div class="stat-card"><div class="stat-number" id="ui-statExp"></div><div class="stat-label">Years Experience</div></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-label">What We Provide</div>
+        <div id="ui-services"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-label">Gallery</div>
+        <div class="gallery-grid" id="ui-gallery"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-label">Contact Details</div>
+        <div class="contact-card">
+            <div class="contact-title"><i class="fa-solid fa-building" style="margin-right:7px;"></i>Head Office</div>
+            <div class="contact-row"><div class="contact-ico"><i class="fa-solid fa-phone"></i></div><div class="contact-info"><strong>Phone</strong><a id="txt-phone1"></a></div></div>
+            <div class="contact-row"><div class="contact-ico"><i class="fa-solid fa-mobile-screen"></i></div><div class="contact-info"><strong>Alternate</strong><a id="txt-phone2"></a></div></div>
+            <div class="contact-row"><div class="contact-ico"><i class="fa-solid fa-envelope"></i></div><div class="contact-info"><strong>Email</strong><a id="txt-email1"></a></div></div>
+            <div class="contact-row"><div class="contact-ico"><i class="fa-solid fa-location-dot"></i></div><div class="contact-info"><strong>Address</strong><span id="txt-addr1"></span></div></div>
+        </div>
+        <div class="contact-card">
+            <div class="contact-title"><i class="fa-solid fa-warehouse" style="margin-right:7px;"></i>Export Office</div>
+            <div class="contact-row"><div class="contact-ico"><i class="fa-solid fa-phone"></i></div><div class="contact-info"><strong>Phone</strong><a id="txt-phone3"></a></div></div>
+            <div class="contact-row"><div class="contact-ico"><i class="fa-solid fa-envelope"></i></div><div class="contact-info"><strong>Email</strong><a id="txt-email2"></a></div></div>
+            <div class="contact-row"><div class="contact-ico"><i class="fa-solid fa-location-dot"></i></div><div class="contact-info"><strong>Address</strong><span id="txt-addr2"></span></div></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-label">Business Hours</div>
+        <ul class="hours-list">
+            <li class="hours-item"><span class="hours-day">Monday</span><span class="hours-time" id="ui-hrMon"></span></li>
+            <li class="hours-item"><span class="hours-day">Tuesday</span><span class="hours-time" id="ui-hrTue"></span></li>
+            <li class="hours-item"><span class="hours-day">Wednesday</span><span class="hours-time" id="ui-hrWed"></span></li>
+            <li class="hours-item"><span class="hours-day">Thursday</span><span class="hours-time" id="ui-hrThu"></span></li>
+            <li class="hours-item"><span class="hours-day">Friday</span><span class="hours-time" id="ui-hrFri"></span></li>
+            <li class="hours-item"><span class="hours-day">Saturday</span><span class="hours-time" id="ui-hrSat"></span></li>
+            <li class="hours-item"><span class="hours-day">Sunday</span><span class="hours-time holiday" id="ui-hrSun"></span></li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <div class="section-label">Find Us</div>
+        <div class="map-wrap">
+            <iframe id="map-iframe" width="100%" height="220" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const res = await fetch('/api/config');
+        const data = await res.json();
+        
+        // Basic Info
+        document.getElementById('ui-companyName').innerText = data.basicInfo.companyName;
+        document.getElementById('ui-companyTagline').innerText = data.basicInfo.companyTagline;
+        document.getElementById('ui-companyDesc').innerText = data.basicInfo.companyDesc;
+
+        // Links / Actions
+        document.getElementById('icon-call').href = `tel:${data.links.phone}`;
+        document.getElementById('icon-mail').href = `mailto:${data.links.emailHead}`;
+        document.getElementById('icon-web').href = data.links.website;
+        document.getElementById('icon-map').href = data.links.mapUrl;
+
+        document.getElementById('btn-whatsapp').href = `https://api.whatsapp.com/send?phone=${data.links.whatsappPhone}`;
+        document.getElementById('btn-call').href = `tel:${data.links.phone}`;
+        document.getElementById('btn-brochure').href = data.links.brochure;
+        document.getElementById('btn-web').href = data.links.website;
+
+        // Stats
+        document.getElementById('ui-statProd').innerText = data.stats.products;
+        document.getElementById('ui-statCtry').innerText = data.stats.countries;
+        document.getElementById('ui-statTeam').innerText = data.stats.team;
+        document.getElementById('ui-statExp').innerText = data.stats.experience;
+
+        // Contact Text
+        document.getElementById('txt-phone1').innerText = data.links.altPhone;
+        document.getElementById('txt-phone1').href = `tel:${data.links.altPhone}`;
+        document.getElementById('txt-phone2').innerText = data.links.phone;
+        document.getElementById('txt-phone2').href = `tel:${data.links.phone}`;
+        document.getElementById('txt-email1').innerText = data.links.emailHead;
+        document.getElementById('txt-email1').href = `mailto:${data.links.emailHead}`;
+        document.getElementById('txt-addr1').innerText = data.links.addressHead;
+
+        document.getElementById('txt-phone3').innerText = data.links.phone;
+        document.getElementById('txt-phone3').href = `tel:${data.links.phone}`;
+        document.getElementById('txt-email2').innerText = data.links.emailExport;
+        document.getElementById('txt-email2').href = `mailto:${data.links.emailExport}`;
+        document.getElementById('txt-addr2').innerText = data.links.addressExport;
+
+        // Hours
+        document.getElementById('ui-hrMon').innerText = data.businessHours.monday;
+        document.getElementById('ui-hrTue').innerText = data.businessHours.tuesday;
+        document.getElementById('ui-hrWed').innerText = data.businessHours.wednesday;
+        document.getElementById('ui-hrThu').innerText = data.businessHours.thursday;
+        document.getElementById('ui-hrFri').innerText = data.businessHours.friday;
+        document.getElementById('ui-hrSat').innerText = data.businessHours.saturday;
+        document.getElementById('ui-hrSun').innerText = data.businessHours.sunday;
+
+        // Map
+        document.getElementById('map-iframe').src = data.links.mapEmbed;
+
+        // Services
+        const srvContainer = document.getElementById('ui-services');
+        data.services.forEach(s => {
+            srvContainer.innerHTML += `
+                <a href="https://api.whatsapp.com/send?phone=${data.links.whatsappPhone}&text=I'm interested in ${s.name}" class="service-item">
+                    <div class="service-icon" style="background:${s.bg}; color:${s.color};"><i class="fa-solid fa-${s.icon}"></i></div>
+                    <div><div class="service-title">${s.name}</div><div class="service-desc">${s.desc}</div></div>
+                </a>
+            `;
+        });
+
+        // Gallery
+        const galContainer = document.getElementById('ui-gallery');
+        data.gallery.forEach(g => {
+            galContainer.innerHTML += `
+                <div class="gallery-item ${g.wide ? 'wide' : ''}">
+                    <img src="${g.url}" alt="${g.title}" loading="lazy">
+                    <div class="overlay"><span>${g.title}</span></div>
+                </div>
+            `;
+        });
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('mainCard').style.display = 'block';
+
+    } catch(err) {
+        document.getElementById('loading').innerHTML = 'Error loading data.';
+    }
+});
+</script>
+</body>
+</html>

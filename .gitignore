@@ -1,0 +1,11 @@
+node_modules/
+.env
+.DS_Store
+npm-debug.log
+yarn-error.log
+
+# React Native / Expo
+hdl-mobile/node_modules/
+hdl-mobile/.expo/
+hdl-mobile/android/
+hdl-mobile/ios/

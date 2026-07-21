@@ -1,0 +1,99 @@
+{
+  "basicInfo": {
+    "companyName": "HDL Global",
+    "companyTagline": "HDL FOODS INDIA PVT LTD",
+    "companyDesc": "Leading Indian exporter of premium food products — Pulses, Blended Spices, Dry Fruits & Fertilizers exported to 25+ countries worldwide."
+  },
+  "links": {
+    "phone": "+91 93138 86251",
+    "altPhone": "+91 94264 31007",
+    "whatsappPhone": "919426431007",
+    "emailHead": "info@hdlglobal.co.in",
+    "emailExport": "export@hdlglobal.co.in",
+    "brochure": "https://go.fliplink.me/view/AAD14BF1-F68A-43CE-8DD5-309BB3CAA2B1",
+    "website": "https://hdlglobal.co.in",
+    "mapUrl": "https://www.google.com/maps/place/HDL+FOODS+(INDIA)+PRIVATE+LIMITED/@22.3800487,70.9223384,1092m",
+    "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2183.974895305898!2d70.92233844!3d22.38004870!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3959ca1cc6edd17d%3A0xce5e5729e378c349!2sHDL%20FOODS%20(INDIA)%20PRIVATE%20LIMITED!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+    "addressHead": "Kevalam Industrial Park, Plot No. 7 & 8, Kuvadva Wanker Highway-113, Village Ranpur, Taluka Rajkot, Dist. Rajkot — 360023, Gujarat, India",
+    "addressExport": "HDL Foods India Pvt Ltd, Kevalam Industrial Park, Rajkot — 360023, Gujarat, India"
+  },
+  "stats": {
+    "products": "500+",
+    "countries": "25+",
+    "team": "97+",
+    "experience": "15+"
+  },
+  "services": [
+    {
+      "name": "Blended Spices",
+      "desc": "Premium quality hand-blended spice mixes processed hygienically and exported to global markets.",
+      "icon": "pepper-hot",
+      "color": "var(--gold)",
+      "bg": "#fff4e0"
+    },
+    {
+      "name": "Premium Pulses",
+      "desc": "Carefully sourced lentils, dals, and legumes — packed with nutrition and trusted by buyers across 25+ nations.",
+      "icon": "seedling",
+      "color": "var(--forest)",
+      "bg": "#eaf3e8"
+    },
+    {
+      "name": "Dry Fruits",
+      "desc": "Almonds, cashews, raisins and more — naturally dried and hygienically packaged for international export.",
+      "icon": "apple-whole",
+      "color": "var(--terra)",
+      "bg": "#fdeee6"
+    },
+    {
+      "name": "Agricultural Fertilizer",
+      "desc": "High-grade organic and inorganic fertilizers for sustainable agricultural use worldwide.",
+      "icon": "leaf",
+      "color": "#2e7a7a",
+      "bg": "#e8f3f3"
+    },
+    {
+      "name": "Other Products",
+      "desc": "A wide range of 500+ grocery & food products sourced from trusted farms across India.",
+      "icon": "boxes-stacked",
+      "color": "#7c5cbf",
+      "bg": "#f0edfb"
+    }
+  ],
+  "gallery": [
+    {
+      "title": "Blended Spices",
+      "url": "https://hdlglobal.co.in/wp-content/uploads/2026/03/Blended-Spices.jpg",
+      "wide": true
+    },
+    {
+      "title": "Pulses",
+      "url": "https://hdlglobal.co.in/wp-content/uploads/2026/03/Pulses.jpg",
+      "wide": false
+    },
+    {
+      "title": "Dry Fruits",
+      "url": "https://hdlglobal.co.in/wp-content/uploads/2026/03/Dry-fruits.jpg",
+      "wide": false
+    },
+    {
+      "title": "Fertilizer",
+      "url": "https://hdlglobal.co.in/wp-content/uploads/2026/03/fertilizer-main.jpg",
+      "wide": false
+    },
+    {
+      "title": "Other Products",
+      "url": "https://hdlglobal.co.in/wp-content/uploads/2026/03/Other-Products.jpg",
+      "wide": false
+    }
+  ],
+  "businessHours": {
+    "monday": "8:30 AM – 7:00 PM",
+    "tuesday": "8:30 AM – 7:00 PM",
+    "wednesday": "8:30 AM – 7:00 PM",
+    "thursday": "8:30 AM – 7:00 PM",
+    "friday": "8:30 AM – 7:00 PM",
+    "saturday": "9:30 AM – 5:00 PM",
+    "sunday": "Holiday"
+  }
+}
