@@ -3,10 +3,25 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
 
 const app = express();
-const PORT = 8000;
-const SECRET_KEY = 'hdl_super_secret_key_123'; // In production, use environment variables
+const PORT = process.env.PORT || 8000;
+const SECRET_KEY = process.env.SECRET_KEY || 'hdl_super_secret_key_123';
+
+// Determine if we should use Supabase
+const useSupabase = process.env.SUPABASE_URL && 
+                    process.env.SUPABASE_KEY && 
+                    !process.env.SUPABASE_KEY.startsWith('YOUR_');
+
+let supabase = null;
+if (useSupabase) {
+    supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+    console.log("Supabase Client initialized successfully.");
+} else {
+    console.warn("Supabase credentials not configured in .env. Running in local file-based mode.");
+}
 
 // Middleware
 app.use(cors());
@@ -14,15 +29,23 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const dataFile = path.join(__dirname, 'data.json');
+const inquiriesFile = path.join(__dirname, 'inquiries.json');
 
 // --- API ROUTES ---
 
 // 1. Get Configuration (Public)
-app.get('/api/config', (req, res) => {
+app.get('/api/config', async (req, res) => {
     try {
-        const data = fs.readFileSync(dataFile, 'utf8');
-        res.json(JSON.parse(data));
+        if (useSupabase) {
+            const { data, error } = await supabase.from('config').select('data').eq('id', 1).single();
+            if (error) throw error;
+            return res.json(data.data);
+        } else {
+            const data = fs.readFileSync(dataFile, 'utf8');
+            return res.json(JSON.parse(data));
+        }
     } catch (err) {
+        console.error("Fetch config error:", err);
         res.status(500).json({ error: 'Failed to read configuration data.' });
     }
 });
@@ -31,7 +54,7 @@ app.get('/api/config', (req, res) => {
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     
-    // Hardcoded credentials as requested
+    // Hardcoded credentials
     if (username === 'hdladmin' && password === '1230') {
         const token = jwt.sign({ user: username }, SECRET_KEY, { expiresIn: '2h' });
         res.json({ token, message: 'Login successful' });
@@ -55,81 +78,117 @@ const authenticateToken = (req, res, next) => {
 };
 
 // 4. Update Configuration (Protected)
-app.post('/api/config', authenticateToken, (req, res) => {
+app.post('/api/config', authenticateToken, async (req, res) => {
     try {
         const newData = req.body;
         // Basic validation
         if (!newData.basicInfo || !newData.links) {
             return res.status(400).json({ error: 'Invalid data format' });
         }
-        fs.writeFileSync(dataFile, JSON.stringify(newData, null, 2));
-        res.json({ message: 'Configuration updated successfully' });
+
+        if (useSupabase) {
+            const { error } = await supabase.from('config').update({ data: newData, updated_at: new Date() }).eq('id', 1);
+            if (error) throw error;
+            res.json({ message: 'Configuration updated successfully in Supabase' });
+        } else {
+            fs.writeFileSync(dataFile, JSON.stringify(newData, null, 2));
+            res.json({ message: 'Configuration updated successfully locally' });
+        }
     } catch (err) {
+        console.error("Save config error:", err);
         res.status(500).json({ error: 'Failed to save configuration data.' });
     }
 });
 
 // 4.5 Submit Inquiry (Public)
-app.post('/api/inquiry', (req, res) => {
+app.post('/api/inquiry', async (req, res) => {
     try {
         const { name, email, phone, message } = req.body;
         if (!name || !message) {
             return res.status(400).json({ error: 'Name and Message are required.' });
         }
-        
-        const inquiryFile = path.join(__dirname, 'inquiries.json');
-        let inquiries = [];
-        if (fs.existsSync(inquiryFile)) {
-            try {
-                inquiries = JSON.parse(fs.readFileSync(inquiryFile, 'utf8'));
-            } catch (e) {
-                inquiries = [];
+
+        if (useSupabase) {
+            const { error } = await supabase.from('inquiries').insert([{ name, email: email || '', phone: phone || '', message }]);
+            if (error) throw error;
+            res.json({ message: 'Inquiry submitted successfully to Supabase!' });
+        } else {
+            let inquiries = [];
+            if (fs.existsSync(inquiriesFile)) {
+                try {
+                    inquiries = JSON.parse(fs.readFileSync(inquiriesFile, 'utf8'));
+                } catch (e) {
+                    inquiries = [];
+                }
             }
+            
+            const newInquiry = {
+                id: Date.now(),
+                name,
+                email: email || '',
+                phone: phone || '',
+                message,
+                timestamp: new Date().toISOString()
+            };
+            
+            inquiries.push(newInquiry);
+            fs.writeFileSync(inquiriesFile, JSON.stringify(inquiries, null, 2));
+            res.json({ message: 'Inquiry submitted successfully locally!' });
         }
-        
-        const newInquiry = {
-            id: Date.now(),
-            name,
-            email: email || '',
-            phone: phone || '',
-            message,
-            timestamp: new Date().toISOString()
-        };
-        
-        inquiries.push(newInquiry);
-        fs.writeFileSync(inquiryFile, JSON.stringify(inquiries, null, 2));
-        res.json({ message: 'Inquiry submitted successfully!' });
     } catch (err) {
+        console.error("Submit inquiry error:", err);
         res.status(500).json({ error: 'Failed to save inquiry.' });
     }
 });
 
 // 4.6 Get Inquiries (Protected)
-app.get('/api/inquiries', authenticateToken, (req, res) => {
+app.get('/api/inquiries', authenticateToken, async (req, res) => {
     try {
-        const inquiryFile = path.join(__dirname, 'inquiries.json');
-        let inquiries = [];
-        if (fs.existsSync(inquiryFile)) {
-            inquiries = JSON.parse(fs.readFileSync(inquiryFile, 'utf8'));
+        if (useSupabase) {
+            const { data, error } = await supabase.from('inquiries').select('*').order('created_at', { ascending: false });
+            if (error) throw error;
+            
+            const formatted = data.map(inq => ({
+                id: inq.id,
+                name: inq.name,
+                email: inq.email,
+                phone: inq.phone,
+                message: inq.message,
+                timestamp: inq.created_at
+            }));
+            return res.json(formatted);
+        } else {
+            let inquiries = [];
+            if (fs.existsSync(inquiriesFile)) {
+                inquiries = JSON.parse(fs.readFileSync(inquiriesFile, 'utf8'));
+            }
+            return res.json(inquiries.reverse());
         }
-        res.json(inquiries.reverse()); // Show newest first
     } catch (err) {
+        console.error("Get inquiries error:", err);
         res.status(500).json({ error: 'Failed to read inquiries.' });
     }
 });
 
 // 4.7 Delete Inquiry (Protected)
-app.delete('/api/inquiries/:id', authenticateToken, (req, res) => {
+app.delete('/api/inquiries/:id', authenticateToken, async (req, res) => {
     try {
         const id = parseInt(req.params.id);
-        const inquiryFile = path.join(__dirname, 'inquiries.json');
-        if (fs.existsSync(inquiryFile)) {
-            let inquiries = JSON.parse(fs.readFileSync(inquiryFile, 'utf8'));
-            inquiries = inquiries.filter(inq => inq.id !== id);
-            fs.writeFileSync(inquiryFile, JSON.stringify(inquiries, null, 2));
+        
+        if (useSupabase) {
+            const { error } = await supabase.from('inquiries').delete().eq('id', id);
+            if (error) throw error;
+            res.json({ message: 'Inquiry deleted successfully from Supabase' });
+        } else {
+            if (fs.existsSync(inquiriesFile)) {
+                let inquiries = JSON.parse(fs.readFileSync(inquiriesFile, 'utf8'));
+                inquiries = inquiries.filter(inq => inq.id !== id);
+                fs.writeFileSync(inquiriesFile, JSON.stringify(inquiries, null, 2));
+            }
+            res.json({ message: 'Inquiry deleted successfully locally' });
         }
-        res.json({ message: 'Inquiry deleted successfully' });
     } catch (err) {
+        console.error("Delete inquiry error:", err);
         res.status(500).json({ error: 'Failed to delete inquiry.' });
     }
 });
