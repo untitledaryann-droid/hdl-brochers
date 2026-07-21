@@ -69,6 +69,41 @@ app.post('/api/config', authenticateToken, (req, res) => {
     }
 });
 
+// 4.5 Submit Inquiry (Public)
+app.post('/api/inquiry', (req, res) => {
+    try {
+        const { name, email, phone, message } = req.body;
+        if (!name || !message) {
+            return res.status(400).json({ error: 'Name and Message are required.' });
+        }
+        
+        const inquiryFile = path.join(__dirname, 'inquiries.json');
+        let inquiries = [];
+        if (fs.existsSync(inquiryFile)) {
+            try {
+                inquiries = JSON.parse(fs.readFileSync(inquiryFile, 'utf8'));
+            } catch (e) {
+                inquiries = [];
+            }
+        }
+        
+        const newInquiry = {
+            id: Date.now(),
+            name,
+            email: email || '',
+            phone: phone || '',
+            message,
+            timestamp: new Date().toISOString()
+        };
+        
+        inquiries.push(newInquiry);
+        fs.writeFileSync(inquiryFile, JSON.stringify(inquiries, null, 2));
+        res.json({ message: 'Inquiry submitted successfully!' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to save inquiry.' });
+    }
+});
+
 // 5. Admin Panel Route (Serves the admin page)
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));

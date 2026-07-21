@@ -122,6 +122,27 @@
 
         .map-wrap { border-radius: 14px; overflow: hidden; }
         .footer-section { padding: 20px; text-align: center; }
+
+        /* INQUIRY FORM */
+        .inquiry-form { display: flex; flex-direction: column; gap: 12px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-input {
+            width: 100%; padding: 12px 14px; border-radius: 10px; border: 1.5px solid rgba(63,89,54,0.15);
+            font-family: inherit; font-size: 13px; background: white; outline: none; transition: border-color 0.2s;
+        }
+        .form-input:focus { border-color: var(--forest); }
+        .form-textarea { height: 80px; resize: none; }
+        .btn-submit {
+            background: var(--forest); color: white; border: none; padding: 14px; border-radius: 12px;
+            font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%;
+        }
+        .btn-submit:hover { background: #2d3e26; }
+        .inquiry-success {
+            display: none; background: #eaf3e8; color: var(--forest); padding: 14px; border-radius: 10px;
+            font-size: 13px; font-weight: 600; text-align: center; border: 1px solid rgba(63,89,54,0.15);
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
@@ -200,6 +221,30 @@
             <li class="hours-item"><span class="hours-day">Saturday</span><span class="hours-time" id="ui-hrSat"></span></li>
             <li class="hours-item"><span class="hours-day">Sunday</span><span class="hours-time holiday" id="ui-hrSun"></span></li>
         </ul>
+    </div>
+
+    <div class="section">
+        <div class="section-label">Send Inquiry</div>
+        <div id="inquiry-success-msg" class="inquiry-success">
+            <i class="fa-solid fa-check-circle" style="margin-right:6px;"></i> Thank you! Your inquiry has been sent.
+        </div>
+        <form id="inquiryForm" class="inquiry-form">
+            <div class="form-group">
+                <input type="text" id="inq-name" class="form-input" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="inq-email" class="form-input" placeholder="Email Address">
+            </div>
+            <div class="form-group">
+                <input type="tel" id="inq-phone" class="form-input" placeholder="Phone Number">
+            </div>
+            <div class="form-group">
+                <textarea id="inq-message" class="form-input form-textarea" placeholder="Describe your requirement..." required></textarea>
+            </div>
+            <button type="submit" id="inq-submit-btn" class="btn-submit">
+                <i class="fa-solid fa-paper-plane"></i> Submit Inquiry
+            </button>
+        </form>
     </div>
 
     <div class="section">
@@ -285,6 +330,46 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="overlay"><span>${g.title}</span></div>
                 </div>
             `;
+        });
+
+        // Inquiry Form Submission
+        const inqForm = document.getElementById('inquiryForm');
+        inqForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('inq-submit-btn');
+            const successMsg = document.getElementById('inquiry-success-msg');
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Sending...';
+            
+            const payload = {
+                name: document.getElementById('inq-name').value,
+                email: document.getElementById('inq-email').value,
+                phone: document.getElementById('inq-phone').value,
+                message: document.getElementById('inq-message').value
+            };
+            
+            try {
+                const res = await fetch('/api/inquiry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    successMsg.style.display = 'block';
+                    inqForm.reset();
+                    submitBtn.style.display = 'none';
+                } else {
+                    alert('Failed to send inquiry. Please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Inquiry';
+                }
+            } catch(err) {
+                alert('Network error. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Inquiry';
+            }
         });
 
         document.getElementById('loading').style.display = 'none';
