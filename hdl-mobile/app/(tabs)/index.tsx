@@ -41,7 +41,7 @@ export default function HomeScreen() {
         <View style={styles.heroOverlay}>
           <View style={styles.logoRing}>
             <Image 
-              source={{ uri: 'https://hdlglobal.co.in/wp-content/uploads/2026/03/cropped-logo.png' }} 
+              source={require('../../assets/images/logo-clean.png')} 
               style={styles.logoImg}
               resizeMode="contain"
             />
