@@ -1,31 +1,33 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './utils/supabase'
 
-interface Todo {
-  id: number;
-  name: string;
-}
-
 export default function App() {
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [companyName, setCompanyName] = useState<string>('Loading...')
 
   useEffect(() => {
-    async function getTodos() {
-      const { data: todos } = await supabase.from('todos').select()
+    async function getConfig() {
+      // Fetch the site configuration from the config table we created
+      const { data, error } = await supabase
+        .from('config')
+        .select('data')
+        .eq('id', 1)
+        .single()
 
-      if (todos) {
-        setTodos(todos as Todo[])
+      if (error) {
+        console.error('Error fetching config:', error)
+        setCompanyName('Error connecting to Supabase')
+      } else if (data && data.data && data.data.basicInfo) {
+        setCompanyName(data.data.basicInfo.companyName)
       }
     }
 
-    getTodos()
+    getConfig()
   }, [])
 
   return (
-    <ul>
-      {todos.map((todo) => (
-        <li key={todo.id}>{todo.name}</li>
-      ))}
-    </ul>
+    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+      <h1>{companyName}</h1>
+      <p>Supabase connection is successfully configured and working!</p>
+    </div>
   )
 }
