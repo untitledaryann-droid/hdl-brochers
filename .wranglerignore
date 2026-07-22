@@ -1,0 +1,14 @@
+node_modules/
+hdl-web/
+hdl-mobile/
+.git/
+.github/
+.gemini/
+.antigravity-ide/
+public/
+server.js
+package-lock.json
+package.json
+build.js
+data.json
+inquiries.json
