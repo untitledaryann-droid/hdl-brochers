@@ -1,33 +1,21 @@
-import { useState, useEffect } from 'react'
-import { supabase } from './utils/supabase'
-
 export default function App() {
-  const [companyName, setCompanyName] = useState<string>('Loading...')
-
-  useEffect(() => {
-    async function getConfig() {
-      // Fetch the site configuration from the config table we created
-      const { data, error } = await supabase
-        .from('config')
-        .select('data')
-        .eq('id', 1)
-        .single()
-
-      if (error) {
-        console.error('Error fetching config:', error)
-        setCompanyName('Error connecting to Supabase')
-      } else if (data && data.data && data.data.basicInfo) {
-        setCompanyName(data.data.basicInfo.companyName)
-      }
-    }
-
-    getConfig()
-  }, [])
-
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>{companyName}</h1>
-      <p>Supabase connection is successfully configured and working!</p>
+    <div style={{ 
+      padding: '2rem', 
+      fontFamily: 'system-ui, sans-serif', 
+      textAlign: 'center',
+      background: 'linear-gradient(135deg, #3f5936 0%, #728c69 100%)',
+      color: 'white',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
+      <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>HDL Global</h1>
+      <p style={{ fontSize: '1.2rem', maxWidth: '600px', lineHeight: '1.6' }}>
+        Welcome to the HDL Global Web portal. The website is successfully built and running on Cloudflare Workers!
+      </p>
     </div>
   )
 }
